@@ -1,10 +1,10 @@
-import type { MiddlewareHandler } from 'hono';
+import type { Env, MiddlewareHandler } from 'hono';
 
 function fakeTransInfo(): string {
   return crypto.randomUUID().replace(/-/g, '').toUpperCase();
 }
 
-export function fakeBanners(): MiddlewareHandler {
+export function fakeBanners<E extends Env = any, P extends string = any>(): MiddlewareHandler<E, P> {
   return async (c, next) => {
     await next();
 

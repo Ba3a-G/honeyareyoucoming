@@ -1,15 +1,20 @@
-import type { Hono, MiddlewareHandler } from 'hono';
+import type { Env, Hono, MiddlewareHandler, Schema } from 'hono';
 
 import { fakeBanners } from './banners';
 import { registerHoneypotRoutes } from './routes';
 import type { HoneypotOptions } from './types';
 
-export function honeypot(_options: HoneypotOptions = {}): MiddlewareHandler {
-  return fakeBanners();
+export function honeypot<E extends Env = any, P extends string = any>(
+  _options: HoneypotOptions = {},
+): MiddlewareHandler<E, P> {
+  return fakeBanners<E, P>();
 }
 
-export function createHoneypot(app: Hono, options: HoneypotOptions = {}): void {
-  app.use('*', honeypot(options));
+export function createHoneypot<E extends Env, S extends Schema, BasePath extends string>(
+  app: Hono<E, S, BasePath>,
+  options: HoneypotOptions = {},
+): void {
+  app.use(honeypot<E, any>(options));
   registerHoneypotRoutes(app, options);
 }
 

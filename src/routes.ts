@@ -1,4 +1,4 @@
-import type { Context, Hono } from 'hono';
+import type { Context, Env, Hono, Schema } from 'hono';
 
 import { fakeIisError } from './errors';
 import { fakeConfigResponse } from './fake-config';
@@ -69,7 +69,10 @@ function wrapHandler(
   };
 }
 
-export function registerHoneypotRoutes(app: Hono, options: HoneypotOptions = {}): void {
+export function registerHoneypotRoutes<E extends Env, S extends Schema, BasePath extends string>(
+  app: Hono<E, S, BasePath>,
+  options: HoneypotOptions = {},
+): void {
   app.get('/.env', wrapHandler(options, fakeEnvResponse));
   app.get('/.env.backup', wrapHandler(options, (c) => tarpit(c, 30_000)));
   app.get('/.env.production', wrapHandler(options, fakeEnvResponse));
